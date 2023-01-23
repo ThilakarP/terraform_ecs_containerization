@@ -23,10 +23,10 @@ resource "aws_subnet" "ecs_public_subnet" {
 
 #Private Subnets
 resource "aws_subnet" "ecs_private_subnet" {
-  count                   = length(var.private_subnets)
-  vpc_id                  = aws_vpc.ecs_vpc.id
-  cidr_block              = element(var.private_subnets[*], count.index)
-  availability_zone       = element(var.azs[*], count.index)
+  count             = length(var.private_subnets)
+  vpc_id            = aws_vpc.ecs_vpc.id
+  cidr_block        = element(var.private_subnets[*], count.index)
+  availability_zone = element(var.azs[*], count.index)
 
   tags = {
     Name = "private-subnet-${count.index + 1}"
@@ -67,29 +67,29 @@ resource "aws_route_table_association" "ecs_rt1_associate" {
 resource "aws_eip" "ecs_eip" {
   vpc = true
 
-      tags = {
+  tags = {
     Name = "eip-for-natgateway"
   }
 }
 
 
 resource "aws_nat_gateway" "ecs_nat_gateway" {
-# Allocating the Elastic IP to the NAT Gateway!
+  # Allocating the Elastic IP to the NAT Gateway!
   allocation_id = aws_eip.ecs_eip.id
-# placing the NAT gateway in public Subnet!
+  # placing the NAT gateway in public Subnet!
   subnet_id = element(aws_subnet.ecs_public_subnet[*].id, 0)
 
-    tags = {
+  tags = {
     Name = "ecs-nat-gateway"
   }
-  
+
 }
 
 resource "aws_route_table" "ecs_nat_rt" {
-    vpc_id = aws_vpc.ecs_vpc.id
+  vpc_id = aws_vpc.ecs_vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.ecs_nat_gateway.id
   }
 
@@ -103,6 +103,6 @@ resource "aws_route_table_association" "ecs_nat_rt_associate" {
   count          = length(var.private_subnets)
   subnet_id      = element(aws_subnet.ecs_private_subnet[*].id, count.index)
   route_table_id = aws_route_table.ecs_nat_rt.id
-  
+
 }
   

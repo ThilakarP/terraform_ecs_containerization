@@ -5,6 +5,13 @@ resource "aws_lb" "ecs_application_lb" {
   subnets            = aws_subnet.ecs_public_subnet[*].id
   security_groups    = [aws_security_group.ecs_lb_sg.id]
 
+  # to store access logs in s3
+  access_logs {
+    bucket   = data.aws_s3_bucket.tfstatebucket.bucket
+    prefix   = "ecs-logs-alb-"
+    enabled  = true
+  }
+
   tags = {
     Name = "ecs-application-lb"
   }

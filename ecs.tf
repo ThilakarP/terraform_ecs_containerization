@@ -16,6 +16,14 @@ resource "aws_ecs_task_definition" "ecs_task1" {
       "cpu": 256,
       "memory": 512,
       "networkMode": "awsvpc",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "${aws_cloudwatch_log_group.ecscloudwatchlogs.id}",
+          "awslogs-region": "${var.project_region}",
+          "awslogs-stream-prefix": "ecs-logs-"
+        }
+      },
       "portMappings": [
         {
           "containerPort": 80,
@@ -34,12 +42,12 @@ resource "aws_ecs_cluster" "ecs_cluster1" {
 
 #Creating the service
 resource "aws_ecs_service" "ecs_service1" {
-  name            = "ecs-service1"
-  cluster         = aws_ecs_cluster.ecs_cluster1.id
-  task_definition = aws_ecs_task_definition.ecs_task1.arn
-  launch_type     = "FARGATE"
+  name                = "ecs-service1"
+  cluster             = aws_ecs_cluster.ecs_cluster1.id
+  task_definition     = aws_ecs_task_definition.ecs_task1.arn
+  launch_type         = "FARGATE"
   scheduling_strategy = "REPLICA"
-  desired_count   = 1
+  desired_count       = 1
 
   network_configuration {
     subnets          = aws_subnet.ecs_private_subnet[*].id
@@ -57,13 +65,13 @@ resource "aws_ecs_service" "ecs_service1" {
 
 
 resource "aws_security_group" "ecs_service_sg1" {
-  name        = "ecs-service-sg1"
-  vpc_id      = aws_vpc.ecs_vpc.id
+  name   = "ecs-service-sg1"
+  vpc_id = aws_vpc.ecs_vpc.id
 
   ingress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
     # cidr_blocks     = ["0.0.0.0/0"]
     security_groups = [aws_security_group.ecs_lb_sg.id]
   }
