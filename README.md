@@ -10,3 +10,4 @@ Hosting a web application on private subnet - ECS container using FARGATE, Appli
 6)  Auto Scaling
 7)  ECS logs configured to cloudwatch
 8)  Application Load Balancer logs stored in S3 bucket.
+

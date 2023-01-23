@@ -75,3 +75,4 @@ resource "aws_s3_bucket_policy" "ecsalbbucketpolicy" {
   bucket = data.aws_s3_bucket.tfstatebucket.id
   policy = data.aws_iam_policy_document.s3_bucket_lb_write.json
 }
+

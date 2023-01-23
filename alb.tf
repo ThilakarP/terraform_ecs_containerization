@@ -17,6 +17,7 @@ resource "aws_lb" "ecs_application_lb" {
   }
 }
 
+
 resource "aws_lb_listener" "ecs_lb_listener" {
   load_balancer_arn = aws_lb.ecs_application_lb.id
   port              = "80"

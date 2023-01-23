@@ -85,6 +85,7 @@ resource "aws_nat_gateway" "ecs_nat_gateway" {
 
 }
 
+
 resource "aws_route_table" "ecs_nat_rt" {
   vpc_id = aws_vpc.ecs_vpc.id
 
